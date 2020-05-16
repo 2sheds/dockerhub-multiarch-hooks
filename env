@@ -17,6 +17,7 @@ ALPINE_VER="${ALPINE_VER:-3.10}"
 PYTHON_VER="${PYTHON_VER:-3.7}"
 BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 BUILD_ENV="qemu"
+ARCH_LIST="amd64 $(ls -1 Dockerfile.* | sed 's|Dockerfile.||')"
 case "${DOCKER_ARCH}" in
     arm64 ) BASEIMAGE_ARCH="arm64v8"; PKG_ARCH="aarch64"; QEMU_ARCH="aarch64" ;;
     arm   ) BASEIMAGE_ARCH="arm32v7"; PKG_ARCH="armhf"; QEMU_ARCH="arm" ;;

@@ -2,7 +2,14 @@
 
 . ./hooks/env
 
-docker build \
+for i in ${ARCH_LIST}; do
+  ${PLATFORMS} = "${PLATFORMS}linux/${i},"
+done
+
+${DOCKER_CLI} buildx create --name mybuilder
+${DOCKER_CLI} buildx use mybuilder
+${DOCKER_CLI} buildx inspect --boostrap
+${DOCKER_CLI} buildx build \
   --build-arg VERSION="${PKG_VER}"  \
   --build-arg COMMIT="${SOURCE_COMMIT}" \
   --build-arg BRANCH="${SOURCE_BRANCH}" \
@@ -15,6 +22,8 @@ docker build \
   --build-arg PKG_ARCH="${PKG_ARCH}" \
   --build-arg QEMU_ARCH="${QEMU_ARCH}" \
 -f "${DOCKERFILE_PATH}" \
--t "${DOCKER_REPO}:latest-${DOCKER_ARCH}" \
--t "${IMAGE_NAME}" . \
+-t "${DOCKER_REPO}:latest" \
+-t "${IMAGE_NAME}" \
+--platform ${PLATFORMS%%,} \
+--push . \
 | while read line ; do echo "$(date)| $line"; done;
