@@ -28,4 +28,4 @@ IMAGE_PREFIX="${IMAGE_NAME%-*}"
 
 # Enable experimental manifest features
 export DOCKER_CLI_EXPERIMENTAL="enabled"
-DOCKER_CLI="docker run -e DOCKER_CLI_EXPERIMENTAL=enabled -v /var/run/docker.sock:/var/run/docker.sock -v ${HOME}/.docker:/root/.docker --rm docker"
+DOCKER_CLI="docker run -e DOCKER_CLI_EXPERIMENTAL=${DOCKER_CLI_EXPERIMENTAL} -v /var/run/docker.sock:/var/run/docker.sock -v ${HOME}/.docker:/root/.docker --rm docker"
