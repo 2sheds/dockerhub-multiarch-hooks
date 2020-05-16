@@ -1,15 +1,18 @@
-#!/bin/bash
+#!/bin/bash -x
 
 . ./hooks/env
 
 for i in ${ARCH_LIST}; do
-  ${PLATFORMS} = "${PLATFORMS}linux/${i},"
+  PLATFORMS="${PLATFORMS}linux/${i},"
 done
 
+${DOCKER_CLI} run --rm --privileged multiarch/qemu-user-static --reset -p yes
+${DOCKER_CLI} -v
+${DOCKER_CLI} buildx install
 ${DOCKER_CLI} buildx create --name mybuilder
 ${DOCKER_CLI} buildx use mybuilder
 ${DOCKER_CLI} buildx inspect --boostrap
-${DOCKER_CLI} buildx build \
+${DOCKER_CLI} build \
   --build-arg VERSION="${PKG_VER}"  \
   --build-arg COMMIT="${SOURCE_COMMIT}" \
   --build-arg BRANCH="${SOURCE_BRANCH}" \
