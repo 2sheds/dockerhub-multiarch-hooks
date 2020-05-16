@@ -2,17 +2,23 @@
 
 . ./hooks/env
 
-for i in ${ARCH_LIST}; do
-  PLATFORMS="${PLATFORMS}linux/${i},"
-done
+if [ "${DOCKER_CLI_EXPERIMENTAL}" = "enabled" ]; then
+  ${DOCKER_CLI} run --rm --privileged multiarch/qemu-user-static --reset -p yes
+  ${DOCKER_CLI} -v
+  ${DOCKER_CLI} buildx install
+  ${DOCKER_CLI} buildx create --name mybuilder
+  ${DOCKER_CLI} buildx use mybuilder
+  ${DOCKER_CLI} buildx inspect --boostrap
+  for i in ${ARCH_LIST}; do
+    PLATFORMS="${PLATFORMS}linux/${i},"
+  done
+  PLATFORMS="--platform ${PLATFORMS%%,} "
+  BUILDER="${DOCKER_CLI}"
+else
+  BUILDER="docker"
+fi
 
-${DOCKER_CLI} run --rm --privileged multiarch/qemu-user-static --reset -p yes
-${DOCKER_CLI} -v
-${DOCKER_CLI} buildx install
-${DOCKER_CLI} buildx create --name mybuilder
-${DOCKER_CLI} buildx use mybuilder
-${DOCKER_CLI} buildx inspect --boostrap
-${DOCKER_CLI} build \
+${BUILDER} build \
   --build-arg VERSION="${PKG_VER}"  \
   --build-arg COMMIT="${SOURCE_COMMIT}" \
   --build-arg BRANCH="${SOURCE_BRANCH}" \
@@ -27,6 +33,6 @@ ${DOCKER_CLI} build \
 -f "${DOCKERFILE_PATH}" \
 -t "${DOCKER_REPO}:latest" \
 -t "${IMAGE_NAME}" \
---platform ${PLATFORMS%%,} \
+${PLATFORMS} \
 --push . \
 | while read line ; do echo "$(date)| $line"; done;
