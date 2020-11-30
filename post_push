@@ -24,13 +24,13 @@ function manifest_annotate {
   for i in ${ARCH_LIST}; do
     case $i in
 	  armhf)
-        EXTRA_PARAM="--variant 'v6'"
+        EXTRA_PARAM="--variant v6"
         ;;
 	  arm)
-        EXTRA_PARAM="--variant 'v7'"
+        EXTRA_PARAM="--variant v7"
         ;;
       arm64)
-        EXTRA_PARAM="--variant 'v8'"
+        EXTRA_PARAM="--variant v8"
         ;;
 	  amd64)
         continue # Skip default arch
@@ -38,7 +38,7 @@ function manifest_annotate {
       *)
         ;;
 	esac
-    ${DOCKER_CLI} manifest annotate $1 ${IMAGE_PREFIX}-${i} --os linux --arch "$i" ${EXTRA_PARAM}
+    ${DOCKER_CLI} manifest annotate $1 ${IMAGE_PREFIX}-${i} --os linux --arch ${i} ${EXTRA_PARAM}
   done
 }
 
